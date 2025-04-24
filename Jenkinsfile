@@ -24,12 +24,12 @@ pipeline {
         stage('Docker Build & Push') {
             steps {
                 // Docker 이미지 빌드
-                sh 'docker build -t qkrehdwns032/hairwhere:${BUILD_NUMBER} .'
+                sh "docker build -t qkrehdwns032/hairwhere:${BUILD_NUMBER} ."
 
                 // Docker 로그인 및 이미지 푸시
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                     sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
-                    sh 'docker push qkrehdwns032/hairwhere:${BUILD_NUMBER}'
+                    sh "docker push qkrehdwns032/hairwhere:${BUILD_NUMBER}"
                 }
             }
         }
@@ -56,7 +56,6 @@ pipeline {
                     '''
                 }
             }
-        }
         }
     }
 }
