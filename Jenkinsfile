@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+
+    tools {
+        jdk 'JDK 17'  // Jenkins에 설정된 JDK 이름과 일치해야 함
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Gradle 실행 권한 부여
+                sh 'chmod +x ./gradlew'
+                // Gradle 빌드
+                sh './gradlew clean bootJar'
+            }
+        }
+
+        stage('Docker Build & Push') {
+            steps {
+                // Docker 이미지 빌드
+                sh 'docker buildx build --platform linux/amd64 -t qkrehdwns032/hairwhere:${BUILD_NUMBER} .'
+
+                // Docker 로그인 및 이미지 푸시
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                    sh 'docker push qkrehdwns032/hairwhere:${BUILD_NUMBER}'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sshagent(['gcp-ssh-key']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no dj@34.64.196.67 << EOF
+                        docker pull qkrehdwns032/hairwhere:${BUILD_NUMBER}
+                        docker stop app-container || true
+                        docker rm app-container || true
+                        docker run -d --name app-container -p 8080:8080 qkrehdwns032/hairwhere:${BUILD_NUMBER}
+                        EOF
+                    '''
+                }
+            }
+        }
+    }
+}
