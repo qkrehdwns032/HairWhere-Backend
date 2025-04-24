@@ -38,7 +38,7 @@ out/
 
 ### 민감한 설정 파일 ###
 src/main/resources/
-src/main/java/hairwhere/config/
+src/main/java/hairwhere/hairwhere/config/
 *.key
 *.pem
 *-secret.json
