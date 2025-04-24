@@ -36,7 +36,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sshagent(['dj']) {
+                sshagent(['gcp-ssh-key']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no dj@34.64.196.67 << EOF
                         docker pull qkrehdwns032/hairwhere:${BUILD_NUMBER}
