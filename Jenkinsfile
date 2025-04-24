@@ -36,9 +36,10 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sshagent(['gcp-ssh-key']) {
+                withCredentials([sshUserPrivateKey(credentialsId: 'gcp-ssh-key', keyFileVariable: 'SSH_KEY')]) {
                     sh '''
-                        ssh -o StrictHostKeyChecking=no dj@34.64.196.67 << EOF
+                        chmod 600 ${SSH_KEY}
+                        ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} dj@34.64.196.67 << EOF
                         docker pull qkrehdwns032/hairwhere:${BUILD_NUMBER}
                         docker stop app-container || true
                         docker rm app-container || true
