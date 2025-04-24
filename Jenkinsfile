@@ -37,7 +37,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'gcp-ssh-key', keyFileVariable: 'SSH_KEY')]) {
-                    sh """
+                    sh '''
                         chmod 600 ${SSH_KEY}
                         ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} dj@34.64.196.67 '
                         # 8080 포트를 사용하는 모든 컨테이너 찾기
@@ -50,12 +50,13 @@ pipeline {
                         fi
 
                         # 새 이미지 pull 및 실행
-                        docker pull qkrehdwns032/hairwhere:${BUILD_NUMBER}
-                        docker run -d --name app-container -p 8080:8080 qkrehdwns032/hairwhere:${BUILD_NUMBER}
+                        docker pull qkrehdwns032/hairwhere:'"${BUILD_NUMBER}"'
+                        docker run -d --name app-container -p 8080:8080 qkrehdwns032/hairwhere:'"${BUILD_NUMBER}"'
                         '
-                    """
+                    '''
                 }
             }
+        }
         }
     }
 }
