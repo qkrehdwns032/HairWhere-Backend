@@ -37,7 +37,6 @@ out/
 .vscode/
 
 ### 민감한 설정 파일 ###
-src/main/resources/
 src/main/java/hairwhere/hairwhere/config/
 *.key
 *.pem
