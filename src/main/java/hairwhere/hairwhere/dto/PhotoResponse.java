@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 @Setter
 public class PhotoResponse {
 
+    private Long id;
     private String nickname;
     private List<String> photoImagePath;
     private int likeCount;
@@ -32,6 +33,7 @@ public class PhotoResponse {
     public static PhotoResponse fromEntity(Photo photo) {
         PhotoResponse response = new PhotoResponse();
 
+        response.setId(photo.getId());
         response.setNickname(photo.getNickname());
         response.setPhotoImagePath(photo.getPhotoImagePath());
         response.setLikeCount(photo.getLikeCount());
